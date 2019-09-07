@@ -43,5 +43,6 @@ problem_2.py
 
 ### Explanation
 
-choice of data structure?
-discuss time complexity
+The data structure for this problem is explicitly defined in the problem statement: return a list. No other structures are necessary.
+
+The time complexity is O(n), where n = number of items, both files and directories, in the passed input "path" directory. Since this is a recursive search algorithm through an unordered, unknown directory structure, the best, average, and worst cases are all the same at O(n). We need to search everything to check if the entity has the suffix of interest, there is no further optimization in this case.

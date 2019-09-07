@@ -34,76 +34,52 @@ def huffman_encoding(data):
         else:
             hashmap[char] = 1
 
-    # list of tuples (key, value) sorted by value, ascending
-    sorted_tuples = sorted([(value, key) for (key, value) in hashmap.items()])
+    # list of tuples (key, value) sorted by value, descending
+    sorted_tuples = sorted([(value, key) for (key, value) in hashmap.items()], reverse=True)
     tuples = [(key, value) for (value, key) in sorted_tuples]
     print(tuples)
 
-    #
-    prev = None
-    while len(tuples) > 1:
+    # convert list of key:value tuples to hashmap of key:Node(key,value)
+    hashmap = {key:Node(key,value) for (key, value) in tuples}
+    print(hashmap)
 
-        # get the first and second tuple off the top of the list
-        first = tuples.pop(0)
-        second = tuples.pop(0)
+    # build tree using recursion
+    def build_tree(tuples):
 
-        # combine the first and second tuples
-        key = first[0] + second[0] # concatenate strings
-        value = first[1] + second[1] # add integers
+        # pop the last two elements (lowest char frequency) off the sorted tuple list
+        first = tuples.pop()
+        second = tuples.pop()
 
-        # create a parent node with this combined tuple
-        parent = Node(key, value)
+        # create a new tuple by combining these last two lowest frequency tuples
+        new_tuple = (first[0] + second[0], first[1] + second[1])
 
-        # its left child is always leaft with a single character (key) and frequency (value)
-        parent.left = Node(first[0], first[1])
+        # TODO nodes
+        node = Node(new_tuple[0], new_tuple[1])
+        node.left = Node(first[0], first[1])
+        node.right = Node(second[0], second[1])
 
-        # the right child is a single key:value leaf on the first iteration only
-        # all subsequent iterations the right child is the previous iteration's parent
-        if prev == None:
-            parent.right = Node(second[0], second[1])
-        else:
-            parent.right = prev
-        prev = parent
+        # insert this new tuple back into the sorted list
+        for i, tuple in enumerate(tuples):
 
-        # create a new tuple with combined first and second node
-        new_tuple = (key, value)
-
-        # # insert this new tuple back into the sorted list
-        # if len(tuples) > 0:
-
-        # loop through the list to find the correct sorted index
-        for i in range(len(tuples)):
-
-            # correct location, insert
-            if tuples[i][1] > value:
+            if new_tuple[1] > tuples[i][1]:
                 tuples.insert(i, new_tuple)
                 break
 
-            # we are at the end of the list without an insert, so append
-            if i == len(tuples) - 1:
-                tuples.append(new_tuple)
-
-        # # catch the very lastcombination when the list has zero elements
-        # else:
-        #     tuples.append(new_tuple)
+        # base case, the last two elements have been combined, move back up to previous layer
+        if len(tuples) == 0:
+            print([new_tuple])
+            return [new_tuple]
 
         print(tuples)
+        tuples = build_tree(tuples)
+        return tuples
 
-    tree = BinaryTree()
-    tree.head = parent
 
-    node = tree.head
 
-    while node:
 
-        print("key: " + node.key + " value: " + str(node.value))
-        node = node.right
+    tree = build_tree(tuples)
 
-    node = tree.head
-    while node:
 
-        print("key: " + node.key + " value: " + str(node.value))
-        node = node.left
 
     return encoded_data, tree
 
@@ -113,7 +89,7 @@ def huffman_decoding(data, tree):
 if __name__ == "__main__":
 
     # a_great_sentence = "The bird is the word"
-    a_great_sentence = "A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED"
+    a_great_sentence = "go go gophers"
 
     print ("The size of the data in bytes is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print ("The content of the data is: {}\n".format(a_great_sentence))

@@ -20,6 +20,7 @@ Here is one type of pseudocode for this coding schema:
 
 [Tree Generator](http://huffman.ooz.ie/)
 
+[Wikipedia](https://en.wikipedia.org/wiki/Huffman_coding)
 
 ### Solution
 

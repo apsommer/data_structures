@@ -11,20 +11,21 @@ class Node:
         self.key = key
         self.value = value
 
+# unsorted binary tree (BT)
 class BinaryTree:
 
-    #
-    def __init__(self):
+    # all we need is the head node for this unsorted BT
+    def __init__(self, head=None):
+        self.head = head
 
-        self.head = None
+# split a given string into a set of tuples (char, frequency of char) and a hashmap that reflects the same data key:value --> char:Node(char, frequency of char)
+def get_tuples_and_hashmap(string):
 
-def huffman_encoding(data):
-
-    # create a blank hashmap
+    # blank hashmap
     hashmap = {}
 
     # loop through each character in the passed string
-    for char in data:
+    for char in string:
 
         # character is already in the hashmap, increment the counter
         if char in hashmap:
@@ -37,14 +38,20 @@ def huffman_encoding(data):
     # list of tuples (key, value) sorted by value, descending
     sorted_tuples = sorted([(value, key) for (key, value) in hashmap.items()], reverse=True)
     tuples = [(key, value) for (value, key) in sorted_tuples]
-    print(tuples)
 
     # convert list of key:value tuples to hashmap of key:Node(key,value)
     hashmap = {key:Node(key,value) for (key, value) in tuples}
-    print(hashmap)
 
-    # build tree using recursion
-    def build_tree(tuples):
+    return tuples, hashmap
+
+# binary tree where each leaf has a single character (key) and its frequency (value)
+def huffman_tree(string):
+
+    # get the sorted list of character-frequencies and a parallel hashmap that reflects the same data
+    tuples, hashmap = get_tuples_and_hashmap(string)
+
+    # build BT using recursion
+    def build_tree(tuples, hashmap):
 
         # pop the last two elements (lowest char frequency) off the sorted tuple list
         first = tuples.pop()
@@ -53,33 +60,46 @@ def huffman_encoding(data):
         # create a new tuple by combining these last two lowest frequency tuples
         new_tuple = (first[0] + second[0], first[1] + second[1])
 
-        # TODO nodes
+        # create a new node with the new tuple
         node = Node(new_tuple[0], new_tuple[1])
-        node.left = Node(first[0], first[1])
-        node.right = Node(second[0], second[1])
+
+        # pop the existing left and right nodes off the hashmap
+        node.left = hashmap.pop(first[0])
+        node.right = hashmap.pop(second[0])
+
+        # add the new "combined" node to the hashmap
+        hashmap[new_tuple[0]] = node
 
         # insert this new tuple back into the sorted list
         for i, tuple in enumerate(tuples):
 
+            # sorted location identified
             if new_tuple[1] > tuples[i][1]:
                 tuples.insert(i, new_tuple)
                 break
 
         # base case, the last two elements have been combined, move back up to previous layer
         if len(tuples) == 0:
-            print([new_tuple])
-            return [new_tuple]
+            return node
 
-        print(tuples)
-        tuples = build_tree(tuples)
-        return tuples
+        return build_tree(tuples, hashmap)
 
+    # start recursion to build tree and return the head node
+    head = build_tree(tuples, hashmap)
 
+    # create a binary tree with this head node and return it
+    return BinaryTree(head)
 
+def huffman_encoding(string):
 
-    tree = build_tree(tuples)
+    # get the head of the constructed BT
+    tree = huffman_tree(string)
 
+    node = tree.head
+    while node:
 
+        print("key: " + node.key + " value: " + str(node.value))
+        node = node.right
 
     return encoded_data, tree
 
@@ -89,7 +109,9 @@ def huffman_decoding(data, tree):
 if __name__ == "__main__":
 
     # a_great_sentence = "The bird is the word"
-    a_great_sentence = "go go gophers"
+    # a_great_sentence = "go go gophers"
+    a_great_sentence = "A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED"
+
 
     print ("The size of the data in bytes is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print ("The content of the data is: {}\n".format(a_great_sentence))

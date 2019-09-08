@@ -28,5 +28,6 @@ problem_3.py
 
 ### Explanation
 
-data structures
-time complexity
+The fundamental data structure for this Huffman compression implementation is the node, used to construct a binary tree. Each node has two pieces of data: a key and value, and two pointers to its children: left and right. Once the binary tree is constructed only a reference to the head (root) node is needed as a starting point to access all other nodes in the tree. The algorithm traverses the tree, through its nodes, accessing each node's key and value in various ways.
+
+We know that searching through a sorted binary tree has worst case O(log(n)) due to each level being a successive power of 2. However, the binary tree in the Huffman algorithm is unsorted, meaning that the worst case is O(n) for search, insert, and delete. When building the bitarray codes, each bit must be accessed in the code for each character. This encoding / decoding step happens a few times in the process of creating the tree and reading data from it. Since each bitarray holds around 2-6 bits for the common alphanumeric character set, the worst case becomes O(6*n), which simplifies to O(n). The beauty of this algorithm is that the characters in the input string that arise at the highest frequency are always represented by the minimum number of bits, which minimizes the length of the total encoded bit stream. The number of bits needed to represent the lowest frequency characters varies depending on how much character variation is in the input, however the number of bits is always much less than n, and we can therefore concluded that the worst case reduces to O(n).

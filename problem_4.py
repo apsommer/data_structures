@@ -45,7 +45,7 @@ def is_user_in_group(user, group):
 
         # subgroups exist, recurse into each one
         for group in groups:
-            get_all_users(group)
+            users = get_all_users(group)
 
         return users
 
@@ -89,7 +89,7 @@ print(is_user_in_group("sub_child_1_user", parent_group))
 # True
 
 # check for the presence of a nonexistant user
-print(is_user_in_group("sub_child_not_added", child_1_group))
+print(is_user_in_group("non_existant_user", child_1_group))
 # False
 
 # verify the presence of the parent_user in the top level parent_group

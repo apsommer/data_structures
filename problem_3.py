@@ -6,10 +6,10 @@ class Node:
     # each node has a key:value pair, and a left and right child
     def __init__(self, key, value):
 
-        self.left = None
-        self.right = None
         self.key = key
         self.value = value
+        self.left = None
+        self.right = None
 
 # unsorted binary tree (BT)
 class BinaryTree:
@@ -74,7 +74,7 @@ def huffman_tree(string):
         for i, tuple in enumerate(tuples):
 
             # sorted location identified
-            if new_tuple[1] > tuples[i][1]:
+            if new_tuple[1] >= tuples[i][1]:
                 tuples.insert(i, new_tuple)
                 break
 
@@ -90,16 +90,13 @@ def huffman_tree(string):
     # create a binary tree with this head node and return it
     return BinaryTree(head)
 
-def huffman_encoding(string):
-
-    # get the head of the constructed BT
-    tree = huffman_tree(string)
+def get_bitcodes(tree):
 
     # initialize some containers for recursion
     hashmap = {}
     bitarray = []
 
-    # recursively traverse the node in a depth-first-search, post-order
+    # recursively traverse the tree in a depth-first-search, post-order
     def traverse(node):
 
         # base case of node = None is implied, a None child never happens
@@ -116,9 +113,13 @@ def huffman_encoding(string):
 
         # add this bit code the hashmap for the single character key
         if len(node.key) == 1:
-            hashmap[node.key] = bitarray.copy()
 
-        # we are about to go up one level in recursion, so pop this last bit off
+            # treat the bitcode as a string for simplicity
+            hashmap[node.key] = ""
+            for bit in bitarray:
+                hashmap[node.key] += str(bit)
+
+        # pop this last bit off before moving up a level in recursion
         if len(bitarray) > 0:
             bitarray.pop()
 
@@ -127,6 +128,16 @@ def huffman_encoding(string):
 
     # start recursion to build the bitcodes for each character in the string
     hashmap = traverse(tree.head)
+
+    return hashmap
+
+def huffman_encoding(string):
+
+    # get the head of the constructed BT
+    tree = huffman_tree(string)
+
+    # get the map of char:bitcode
+    hashmap = get_bitcodes(tree)
 
     # build the output data as a string of 0 and 1 ... 0010100111101
     encoded_data = ""
@@ -143,25 +154,83 @@ def huffman_encoding(string):
 
     return encoded_data, tree
 
-def huffman_decoding(data, tree):
-    pass
+def huffman_decoding(encoded_data, tree):
 
+    # get the map of char:bitcode
+    hashmap = get_bitcodes(tree)
+
+    # swap the keys and values so we can iterate against the bitcodes
+    hashmap = {value: key for key, value in hashmap.items()}
+
+    # initialize the output string and a temporary holder for the bitcode conversion
+    decoded_data = ""
+    bitcode = ""
+
+    # one bit at a time
+    for bit in encoded_data:
+
+        # add a single bit until the bitcode is recognized in the hashmap
+        bitcode += bit
+
+        # code matches, add character to output string and reset the temporary string holder
+        if bitcode in hashmap:
+            decoded_data += hashmap[bitcode]
+            bitcode = ""
+
+    return decoded_data
+
+# test function generates output for various input strings
+def test(string):
+
+    # analyze the input string
+    print()
+    print ("The size of the data in bytes is: {}".format(sys.getsizeof(string)))
+    print ("The content of the data is: {}".format(string))
+
+    # encoded to a stream of bit prefixes
+    encoded_data, tree = huffman_encoding(string)
+    print ("The size of the encoded data in bytes: {}".format(sys.getsizeof(int(encoded_data, base=2))))
+    print ("The content of the encoded data is: {}".format(encoded_data))
+
+    # decode back to the original string
+    decoded_data = huffman_decoding(encoded_data, tree)
+    print ("The size of the decoded data in bytes: {}".format(sys.getsizeof(decoded_data)))
+    print ("The content of the encoded data is: {}".format(decoded_data))
+    print()
+
+########## TESTING ##########
 if __name__ == "__main__":
 
-    # a_great_sentence = "The bird is the word"
-    # a_great_sentence = "go go gophers"
+    # test 1, provided
+    a_great_sentence = "The bird is the word"
+    print()
+    print("TEST 1")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 45
+    # The content of the data is: The bird is the word
+    # The size of the encoded data in bytes: 22
+    # The content of the encoded data is: 0110000111111001110010101110110001100111010100001111110101110000101110
+    # The size of the decoded data in bytes: 45
+    # The content of the encoded data is: The bird is the word
+
+    # test 2, wikipedia example
     a_great_sentence = "A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED"
+    print("TEST 2")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 71
+    # The content of the data is: A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED
+    # The size of the encoded data in bytes: 28
+    # The content of the encoded data is: 1001001101000010010000111101100011000011001111110000111111011111100110011111110100011000011011111011101001111111000
+    # The size of the decoded data in bytes: 71
+    # The content of the encoded data is: A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED
 
-
-    print ("The size of the data in bytes is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    print ("The content of the data is: {}\n".format(a_great_sentence))
-
-    encoded_data, tree = huffman_encoding(a_great_sentence)
-
-    print ("The size of the encoded data in bytes: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    print ("The content of the encoded data is: {}\n".format(encoded_data))
-
-    # decoded_data = huffman_decoding(encoded_data, tree)
-    #
-    # print ("The size of the decoded data in bytes: {}\n".format(sys.getsizeof(decoded_data)))
-    # print ("The content of the encoded data is: {}\n".format(decoded_data))
+    # test 3
+    a_great_sentence = "This was a tough one, but good practice for recursion."
+    print("TEST 3")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 79
+    # The content of the data is: This was a tough one, but good practice for recursion.
+    # The size of the encoded data in bytes: 42
+    # The content of the encoded data is: 11010010111011001111110000100010111111000111110000011001101101011111100111000010111001011111010110011000111101100010011101101110000010100001010010000110010001011111101110011010111101001010100100110100111011000111000110011
+    # The size of the decoded data in bytes: 79
+    # The content of the encoded data is: This was a tough one, but good practice for recursion.

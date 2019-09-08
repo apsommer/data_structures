@@ -95,11 +95,51 @@ def huffman_encoding(string):
     # get the head of the constructed BT
     tree = huffman_tree(string)
 
-    node = tree.head
-    while node:
+    # initialize some containers for recursion
+    hashmap = {}
+    bitarray = []
 
-        print("key: " + node.key + " value: " + str(node.value))
-        node = node.right
+    # recursively traverse the node in a depth-first-search, post-order
+    def traverse(node):
+
+        # base case of node = None is implied, a None child never happens
+
+        # traverse down left side, corresponds to bit 0
+        if node.left:
+            bitarray.append(0)
+            traverse(node.left)
+
+        # traverse down right side, corresponds to bit 1
+        if node.right:
+            bitarray.append(1)
+            traverse(node.right)
+
+        # add this bit code the hashmap for the single character key
+        if len(node.key) == 1:
+            hashmap[node.key] = bitarray.copy()
+
+        # we are about to go up one level in recursion, so pop this last bit off
+        if len(bitarray) > 0:
+            bitarray.pop()
+
+        # up one layer in recursion
+        return hashmap
+
+    # start recursion to build the bitcodes for each character in the string
+    hashmap = traverse(tree.head)
+
+    # build the output data as a string of 0 and 1 ... 0010100111101
+    encoded_data = ""
+
+    # take the original string, and replace each character with its derived bitcode
+    for char in string:
+
+        # bitcode for this character is stored in the hashmap
+        bitcode = hashmap[char]
+
+        # the codes have between 2-4 bits each
+        for bit in bitcode:
+            encoded_data += str(bit)
 
     return encoded_data, tree
 
@@ -118,9 +158,9 @@ if __name__ == "__main__":
 
     encoded_data, tree = huffman_encoding(a_great_sentence)
 
-    # print ("The size of the encoded data in bytes: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    # print ("The content of the encoded data is: {}\n".format(encoded_data))
-    #
+    print ("The size of the encoded data in bytes: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
+    print ("The content of the encoded data is: {}\n".format(encoded_data))
+
     # decoded_data = huffman_decoding(encoded_data, tree)
     #
     # print ("The size of the decoded data in bytes: {}\n".format(sys.getsizeof(decoded_data)))

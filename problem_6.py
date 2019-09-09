@@ -49,8 +49,33 @@ class LinkedList:
 
 # union = A or B
 def union(llist_1, llist_2):
-    # Your Solution Here
-    pass
+
+    # hashmap to unique element set
+    hashmap = {}
+
+    # iterate through first linked list
+    node = llist_1.head
+    while node:
+
+        # add the element value to the hashmap
+        hashmap[node.value] = node.value
+        node = node.next
+
+    # iterate through second linked list
+    node = llist_2.head
+    while node:
+
+        # add the element value to the hashmap
+        hashmap[node.value] = node.value
+        node = node.next
+
+    # we now have a hashmap that contains the union of A and B
+    # convert the hashmap back to a linked list and return it
+    output = LinkedList()
+    for key, value in hashmap.items():
+        output.append(key)
+
+    return output
 
 # intersection = A and B
 def intersection(llist_1, llist_2):
@@ -70,8 +95,9 @@ element_2 = [6, 32, 4, 9, 6, 1, 11, 21, 1]
 for i in element_2:
     linked_list_2.append(i)
 
-print(union(linked_list_1,linked_list_2))
-print(intersection(linked_list_1,linked_list_2))
+print(union(linked_list_1, linked_list_2))
+# 3 -> 2 -> 4 -> 35 -> 6 -> 65 -> 21 -> 32 -> 9 -> 1 -> 11 ->
+# print(intersection(linked_list_1,linked_list_2))
 #
 
 # test 2
@@ -86,5 +112,6 @@ for i in element_2:
     linked_list_4.append(i)
 
 print (union(linked_list_3,linked_list_4))
-print (intersection(linked_list_3,linked_list_4))
-#
+# 3 -> 2 -> 4 -> 35 -> 6 -> 65 -> 23 -> 1 -> 7 -> 8 -> 9 -> 11 -> 21 ->
+# print (intersection(linked_list_3,linked_list_4))
+# #

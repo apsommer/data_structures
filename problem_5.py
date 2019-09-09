@@ -1,6 +1,6 @@
 import hashlib, time
 
-# node of the blockchain
+# block is the fundamental unit of the blockchain, simply a node
 class Block:
 
     # constructor passed a timestamp, a simple string, and the previous block name
@@ -11,17 +11,24 @@ class Block:
         self.data = data
         self.previous_hash = previous_hash
 
-        # the hash is calculated using the hashlib library
+        # the hash is calculated using the imported hash library
+        # to ensure the hash is unique (for this example) pass the unique data string
         self.hash = self.calc_hash(data)
 
-    # return a unique hashcode for a given string
+    # return a hashcode for a given string using the SHA-256 algorithm published by the NSA
     def calc_hash(self, string):
 
+        # initialize the library object
         sha = hashlib.sha256()
+
+        # properly format the string for input to the hash function
         format_str = string.encode('utf-8')
         sha.update(format_str)
+
+        # return the 256 bit hashcode
         return sha.hexdigest()
-#
+
+# blockchain is a linked list
 class LinkedList:
 
     # constructor
@@ -32,30 +39,36 @@ class LinkedList:
     # append a block, this is the only method needed for this simple blockchain implementation
     def append(self, block):
 
-        # the most recent block is the tail
+        # the most recent block is the tail, which continuously moves with each appended block
         # the head is the genesis block
 
+        # block objects are maintained in a hashmap for O(1) lookup
         self.hashmap[block.hash] = block
 
-        #
+        # catch the very first block (genesis block)
         if self.tail == None:
             self.tail = block
             return
 
-        # get the hashcode from the current tail node
+        # get the hashcode from the current tail
         previous_hash = self.tail.hash
 
+        # pass this hashcode as the previous hashcode for this new block, making this new block the tail
         self.tail = Block(timestamp, data, previous_hash)
 
     # pretty print for console display
     def __str__(self):
 
+        # this framework function must return a string
         output = "\n"
 
+        # get the current tail
         block = self.tail
 
+        # move backwards through every element in the chain
         while block:
 
+            # concatenate the block's data for output
             output += block.data + "\n"
             output += block.timestamp + "\n"
             output += "hash: " + block.hash + "\n"
@@ -65,6 +78,7 @@ class LinkedList:
                 output += block.previous_hash + "\n"
             output += "\n"
 
+            # lookup the previous block at O(1) time by referencing the parrallel hashmap
             block = self.hashmap.get(block.previous_hash)
 
         return output

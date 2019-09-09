@@ -45,7 +45,7 @@ def is_user_in_group(user, group):
 
         # subgroups exist, recurse into each one
         for group in groups:
-            users = get_all_users(group)
+            get_all_users(group)
 
         return users
 

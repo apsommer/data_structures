@@ -97,6 +97,6 @@ problem_6.py
 
 ### Explanation
 
-    The data structures for the mathematical union and intersection of two linked lists are of course the linked lists themselves, their constituent nodes, and this implementation uses a hashmap for its O(1) lookup speed and to ensure uniqueness of the output list.
+The data structures for the mathematical union and intersection of two linked lists are of course the linked lists themselves, their constituent nodes, and this implementation uses a hashmap for its O(1) lookup speed and to ensure uniqueness of the output list.
 
-    Each linked list must be iterated completely to access each element for O(n), where n = number of nodes in both list 1 in list 2. For both union and intersection the hashmap stores the elements of list 1. To construct the union elements of list 2 are added if they are unique, and to find the intersection elements of list 2 are checked for a match against list 1. The presence of a key in a hashmap occurs in O(1) time. Therefore, both the union and intersection implementations simplify to linear time O(n).
+Each linked list must be iterated completely to access each element for O(n), where n = number of nodes in both list 1 in list 2. For both union and intersection the hashmap stores the elements of list 1. To construct the union elements of list 2 are added if they are unique, and to find the intersection elements of list 2 are checked for a match against list 1. The presence of a key in a hashmap occurs in O(1) time. Therefore, both the union and intersection implementations simplify to linear time O(n).

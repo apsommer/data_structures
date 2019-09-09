@@ -43,5 +43,4 @@ problem_5.py
 
 ### Explanation
 
-data structures
-time complexity
+The blockchain itself is a linked list of custom blocks. A hashmap is used to hold every hashcode and corresponding block for a lookup time complexity of O(1). There is a kind of "black box" with hashlib module executing the SHA-256 algorithm. For this simple implementation a data string is used to generate the hashcode, since this code certainly considers each character of the string, the complexity to generate the code is O(n), where n = number of characters in the passed string. Therefore, to initially create the block complexity is O(n) where n = number of characters in the hash input string, and to retrieve any block thereafter is O(1) since we are accessing a hashmap.

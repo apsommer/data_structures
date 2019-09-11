@@ -53,6 +53,16 @@ def huffman_tree(string):
     # build BT using recursion
     def build_tree(tuples, hashmap):
 
+        # This method is kind of a "reverse" recursion. The nodes are built on the way down to the base case, and then the head is returned all the way back up. There is no code executed after the base case is reached.
+
+        # catch edge case where where the input string has only a single character, ex: "aaaaaa"
+        if len(tuples) == 1:
+
+            # pop the single tuple off the list, create a node with it, and return the node as the head of this single-node BT
+            tuple = tuples.pop()
+            node = Node(tuple[0], tuple[1])
+            return node
+
         # pop the last two elements (lowest char frequency) off the sorted tuple list
         first = tuples.pop()
         second = tuples.pop()
@@ -78,7 +88,7 @@ def huffman_tree(string):
                 tuples.insert(i, new_tuple)
                 break
 
-        # base case, the last two elements have been combined, move back up to previous layer
+        # base case, the last two elements have been combined, move back up all previous layers essentially in one shot as the base case is followed by the return
         if len(tuples) == 0:
             return node
 
@@ -119,6 +129,10 @@ def get_bitcodes(tree):
             for bit in bitarray:
                 hashmap[node.key] += str(bit)
 
+            # catch edge case where where the input string has only a single character, ex: "aaaaaa"
+            if len(bitarray) == 0:
+                hashmap[node.key] += str(0)
+
         # pop this last bit off before moving up a level in recursion
         if len(bitarray) > 0:
             bitarray.pop()
@@ -132,6 +146,11 @@ def get_bitcodes(tree):
     return hashmap
 
 def huffman_encoding(string):
+
+    # catch bad input string
+    if string == None or len(string) == 0:
+        print("Empty data!")
+        exit()
 
     # get the head of the constructed BT
     tree = huffman_tree(string)
@@ -234,3 +253,33 @@ if __name__ == "__main__":
     # The content of the encoded data is: 11010010111011001111110000100010111111000111110000011001101101011111100111000010111001011111010110011000111101100010011101101110000010100001010010000110010001011111101110011010111101001010100100110100111011000111000110011
     # The size of the decoded data in bytes: 79
     # The content of the encoded data is: This was a tough one, but good practice for recursion.
+
+    # test 4: edge case repetitive alphabet
+    a_great_sentence = "aaaaaa"
+    print("TEST 4")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 31
+    # The content of the data is: aaaaaa
+    # The size of the encoded data in bytes: 12
+    # The content of the encoded data is: 000000
+    # The size of the decoded data in bytes: 31
+    # The content of the encoded data is: aaaaaa
+
+    # test 5: numeric data, symbols, letters, are all allowed
+    a_great_sentence = "1232_**&asllTT-="
+    print("TEST 5")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 41
+    # The content of the data is: 1232_**&asllTT-=
+    # The size of the encoded data in bytes: 20
+    # The content of the encoded data is: 10100011011001110100000010001110111101101101001010011100
+    # The size of the decoded data in bytes: 41
+    # The content of the encoded data is: 1232_**&asllTT-=
+
+    # test 6: empty/null sentence
+    a_great_sentence = ""
+    print("TEST 6")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 25
+    # The content of the data is:
+    # Empty data!

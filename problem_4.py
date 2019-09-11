@@ -95,3 +95,7 @@ print(is_user_in_group("non_existant_user", child_1_group))
 # verify the presence of the parent_user in the top level parent_group
 print(is_user_in_group("parent_user", parent_group))
 # True
+
+# edge case: empty user name string
+print(is_user_in_group("", parent_group))
+# True

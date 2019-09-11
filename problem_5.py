@@ -6,6 +6,11 @@ class Block:
     # constructor passed a timestamp, a simple string, and the previous block name
     def __init__(self, data):
 
+        # catch bad data format
+        if data == "" or data == None:
+            print("Can't add block without any data!")
+            return
+
         # data is the only passed input
         self.data = data
 
@@ -63,6 +68,10 @@ class LinkedList:
 
     # pretty print for console display
     def __str__(self):
+
+        # catch empty blockchain
+        if self.tail == None:
+            return "Blockchain empty!"
 
         # this framework function must return a string
         output = "\n"
@@ -141,4 +150,15 @@ print(blockchain)
 # hash: 8eb412d817c7762cbd93dd64982b163e9b75ab1e4b584052b2c675247a7a9c22
 # prev:
 
-# edge case:
+# edge case: try to add a block with any empty data string
+print("##### Test 4")
+data = ""
+block = Block(data)
+# Can't add block without any data!
+
+# edge case: try to print an empty blockchain
+blockchain = LinkedList()
+print()
+print("##### Test 5")
+print(blockchain)
+# Blockchain empty!

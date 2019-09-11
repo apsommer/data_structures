@@ -32,6 +32,11 @@ class LRU_Cache:
     # get an item from the cache (peek)
     def get(self, key):
 
+        # catch zero capacity cache
+        if self.capacity == 0:
+            print("Can't perform operations on 0 capacity cache")
+            return
+
         # catch if the key does not exist
         if key not in self.hashmap:
             return -1
@@ -42,6 +47,11 @@ class LRU_Cache:
 
     # remove an item from the cache and return it
     def pop(self, key):
+
+        # catch zero capacity cache
+        if self.capacity == 0:
+            print("Can't perform operations on 0 capacity cache")
+            return
 
         # catch if the key does not exist
         if key not in self.hashmap:
@@ -73,6 +83,11 @@ class LRU_Cache:
 
     # add item to the cache, if capacity is exceeded then evict the oldest element first
     def set(self, key, value):
+
+        # catch zero capacity cache
+        if self.capacity == 0:
+            print("Can't perform operations on 0 capacity cache")
+            return
 
         # key already exists so only need to update its value
         if key in self.hashmap:
@@ -249,4 +264,24 @@ cache.print_cache()
 # key = 6 : value = 6
 # key = 7 : value = 7
 
-#
+# test 3: edge case of get/set on capacity 0
+cache = LRU_Cache(0)
+cache.set(1, 1)
+# Can't perform operations on 0 capacity cache
+cache.get(2)
+# Can't perform operations on 0 capacity cache
+cache.pop(3)
+# Can't perform operations on 0 capacity cache
+
+# test 4: update value of existing item
+lru = LRU_Cache(2)
+lru.set(1, 1)
+lru.set(2, 2)
+lru.set(1, 10)
+print(lru.get(1))
+# 10
+print(lru.get(2))
+
+lru.print_cache()
+# key = 1 : value = 10
+# key = 2 : value = 2

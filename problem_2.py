@@ -17,10 +17,13 @@ def find_files(suffix, path):
        a list of paths
     """
 
-    # initialize a blank list to hold all files with passed suffix
-    files = []
+    # catch bad path name
+    if not os.path.exists(path):
+        print("The specified path does not exist.")
+        return
 
-    # recursive layer
+    # recursion carries a list of full path name files with the specified suffix
+    files = []
     def _find_files(suffix, path, files):
 
         # all files and directories on this level
@@ -51,7 +54,13 @@ def find_files(suffix, path):
         return files
 
     # start recursion with the passed directory name
-    return _find_files(suffix, path, files)
+    files = _find_files(suffix, path, files)
+
+    # catch no files with the specified extension
+    if len(files) == 0:
+        print("There are no files with this extension.")
+
+    return files
 
 ########## TESTING ##########
 
@@ -77,11 +86,23 @@ print(*find_files(".h", "p2_testdir"), sep = "\n")
 print()
 print("all files with suffix .py in current directory ./")
 print(*find_files(".py", "."), sep = "\n")
+# ./problem_6.py
+# ./problem_5.py
+# ./problem_4.py
+# ./problem_3.py
 # ./problem_2.py
 # ./problem_1.py
 
-# all files with suffix .none in current directory ./
+# edge case: no files with specified extension
 print()
-print("all files with suffix .none in current directory ./")
-print(*find_files(".none", "."), sep = "\n")
+print("all files with suffix .not_here in current directory ./")
+print(*find_files(".not_here", "."), sep = "\n")
 # (no output)
+
+# edge case: empty path specified
+print("empty path specified")
+find_files(".na", "")
+# p2_testdir/t1.h
+# p2_testdir/subdir5/a.h
+# p2_testdir/subdir3/subsubdir1/b.h
+# p2_testdir/subdir1/a.h

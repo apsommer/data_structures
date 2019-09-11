@@ -4,12 +4,17 @@ import hashlib, time
 class Block:
 
     # constructor passed a timestamp, a simple string, and the previous block name
-    def __init__(self, timestamp, data, previous_hash):
+    def __init__(self, data):
 
-        # set object fields
-        self.timestamp = timestamp
+        # data is the only passed input
         self.data = data
-        self.previous_hash = previous_hash
+
+        # timestamp in greenwich mean time
+        timestamp = "GMT: " + time.strftime("%a, %d %b %Y %I:%M:%S %p %Z", time.gmtime())
+        self.timestamp = timestamp
+
+        # set in blockchain.append()
+        self.previous_hash = None
 
         # the hash is calculated using the imported hash library
         # to ensure the hash is unique (for this example) pass the unique data string
@@ -45,16 +50,16 @@ class LinkedList:
         # block objects are maintained in a hashmap for O(1) lookup
         self.hashmap[block.hash] = block
 
-        # catch the very first block (genesis block)
+        # catch appending the first element to an empty list
         if self.tail == None:
             self.tail = block
             return
 
-        # get the hashcode from the current tail
-        previous_hash = self.tail.hash
+        # get the hash from the current tail, which becomes the previous hash of this new tail
+        block.previous_hash = self.tail.hash
 
-        # pass this hashcode as the previous hashcode for this new block, making this new block the tail
-        self.tail = Block(timestamp, data, previous_hash)
+        # move the tail to the newly appended block
+        self.tail = block
 
     # pretty print for console display
     def __str__(self):
@@ -88,15 +93,10 @@ class LinkedList:
 # create a new blockchain (linked list)
 blockchain = LinkedList()
 
-# create the genesis block, there is no previous hash on this first block
+# create the genesis block and add it to the chain, previous hash on this first block is None
 data = "Block 1"
-timestamp = "GMT: " + time.strftime("%a, %d %b %Y %I:%M:%S %p %Z", time.gmtime())
-previous_hash = None
-
-# add the block to the chain
-first_block = Block(timestamp, data, previous_hash)
+first_block = Block(data)
 blockchain.append(first_block)
-
 print("##### Test 1")
 print(blockchain)
 # Block 1
@@ -104,15 +104,10 @@ print(blockchain)
 # hash: 8eb412d817c7762cbd93dd64982b163e9b75ab1e4b584052b2c675247a7a9c22
 # prev:
 
-# create the second block, this time the previous hash is that of block 1 above
-timestamp = "GMT: " + time.strftime("%a, %d %b %Y %I:%M:%S %p %Z", time.gmtime())
+# create the second block and add it to the chain, this time the previous hash is that of block 1 above
 data = "Block 2"
-previous_hash = blockchain.tail.hash
-
-# add the block to the chain
-second_block = Block(timestamp, data, previous_hash)
+second_block = Block(data)
 blockchain.append(second_block)
-
 print("##### Test 2")
 print(blockchain)
 # Block 2
@@ -126,12 +121,9 @@ print(blockchain)
 # prev:
 
 # and one more block to show pattern ...
-timestamp = "GMT: " + time.strftime("%a, %d %b %Y %I:%M:%S %p %Z", time.gmtime())
 data = "Block 3"
-previous_hash = blockchain.tail.hash
-block = Block(timestamp, data, previous_hash)
+block = Block(data)
 blockchain.append(block)
-
 print("##### Test 3")
 print(blockchain)
 # Block 3
@@ -148,3 +140,5 @@ print(blockchain)
 # GMT: Mon, 09 Sep 2019 03:12:10 AM Pacific Standard Time
 # hash: 8eb412d817c7762cbd93dd64982b163e9b75ab1e4b584052b2c675247a7a9c22
 # prev:
+
+# edge case:

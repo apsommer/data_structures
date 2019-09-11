@@ -25,8 +25,8 @@ problem_1.py
 
 ### Explanation
 
-The first thought is to implement a hashmap as we know its get() and set() operations are constant O(1) time. However, the requirement that the cache's oldest element be evicted when its capacity is exceeded means another structure must be implemented, possibly in combination with the hashmap. The last-in-first-out (LIFO) pattern implies a queue data structure. However, we can get() an element from the hashmap in any order. This element can be in the middle of the tracking queue, and this search through the queue has a worst case of O(n). The requirement for the LRU cache is that all operations take O(1) time.
+The first thought is to implement a hashmap since its use operations are in constant O(1) time. However, the requirement that the cache's oldest element be evicted when its capacity is full implies another structure must be implemented in combination with the hashmap. The last-in-first-out (LIFO) pattern conjures the queue data structure. However, we can get() an element from the hashmap in any order. This element can be in the middle of the tracking queue, and this search through the queue has a worst case of O(n). The requirement for the LRU cache is that all operations take O(1) time.
 
-How can we combine the hashmap and queue ideas together? Let's have the hashmap store nodes of a linked list. In this way, get() and set() are still the desirable O(1) with the element's age apparent in the list position. In this way get() and set() implementations become pointer management of the previous node, next node, head node, and tail node.
+Let's have the hashmap store nodes of a linked list. In this way, get() and set() are still the desirable O(1) with the element's age apparent in the list position. In this way get() and set() implementations become pointer management of the previous node, next node, head node, and tail node.
 
 The conceptual crux here is that the node of the linked list is accessed directly with the hashmap key. We have access to the newest (head) and oldest (tail) nodes for get() and set() and retain the O(1) time complexity of the top level operation.

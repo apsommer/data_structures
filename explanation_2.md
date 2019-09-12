@@ -43,7 +43,7 @@ problem_2.py
 
 ### Explanation
 
-The data structure for this problem is explicitly defined in the problem statement: return a list. No other structures are necessary. Another perspective on this solution is to consider this as traversal through a tree structure. The leaves of the three are the files, and the directories are nodes.
+The data structure for this problem is explicitly defined in the problem statement: return a list. No other structures are necessary. Another perspective on this solution is to consider this as traversal through a tree structure. The leaves of the tree are the files, and the directories are nodes.
 
 The time complexity is O(n), where n = number of items, both files and directories, in the passed input "path" directory. Since this is a recursive search algorithm through an unordered, unknown directory structure, the best, average, and worst cases are all the same at O(n). We need to search everything to check if the entity has the suffix of interest, there is no further optimization in this case.
 

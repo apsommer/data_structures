@@ -66,6 +66,8 @@ class LinkedList:
         # move the tail to the newly appended block
         self.tail = block
 
+    # TODO: A validate_chain() function to check if a block's previous hash truely matches the hash in the block of it's previous pointer. To do this a 'prev' pointer attribute must be added to block object and managed in the append() function. Calling this method on a corrupted blockchain should return a list that contains the position of corrupted blocks, meaning all blocks with mismatched hash links.
+
     # pretty print for console display
     def __str__(self):
 

@@ -98,4 +98,4 @@ print(is_user_in_group("parent_user", parent_group))
 
 # edge case: empty user name string
 print(is_user_in_group("", parent_group))
-# True
+# False

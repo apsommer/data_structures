@@ -12,7 +12,7 @@ class Node:
         self.prev = None
         self.next = None
 
-# common logic for both get() and set() moves the passed node to the tail
+# common logic for both cache get() and set() moves the passed node to the tail
 def new_tail(self, node):
 
     # head, pop it off

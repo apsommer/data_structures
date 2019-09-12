@@ -30,3 +30,5 @@ The first thought is to implement a hashmap since its use operations are in cons
 Let's have the hashmap store nodes of a linked list. In this way, get() and set() are still the desirable O(1) with the element's age apparent in the list position. In this way get() and set() implementations become pointer management of the previous node, next node, head node, and tail node.
 
 The conceptual crux here is that the node of the linked list is accessed directly with the hashmap key. We have access to the newest (head) and oldest (tail) nodes for get() and set() and retain the O(1) time complexity of the top level operation.
+
+Space complexity is O(n), where n = number of nodes in the cache. This can be determined by inspection. The only loop in program is when each item in the cache is printed to the console. Both get() and set() use a hashmap and reorganize a linked list, which both require the space equal the number of items they contain. This simplifies to O(n) total space complexity.

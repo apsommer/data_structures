@@ -148,9 +148,9 @@ def get_bitcodes(tree):
 def huffman_encoding(string):
 
     # catch bad input string
-    if string == None or len(string) == 0:
-        print("Empty data!")
-        exit()
+    if not isinstance(string, str) or string == None or len(string) == 0:
+        print("Must input a valid string!")
+        return None, None
 
     # get the head of the constructed BT
     tree = huffman_tree(string)
@@ -208,6 +208,12 @@ def test(string):
 
     # encoded to a stream of bit prefixes
     encoded_data, tree = huffman_encoding(string)
+
+    # check if bad input was passed
+    if encoded_data == None:
+        print()
+        return
+
     print ("The size of the encoded data in bytes: {}".format(sys.getsizeof(int(encoded_data, base=2))))
     print ("The content of the encoded data is: {}".format(encoded_data))
 
@@ -283,3 +289,11 @@ if __name__ == "__main__":
     # The size of the data in bytes is: 25
     # The content of the data is:
     # Empty data!
+
+    # test 7: non-string data
+    a_great_sentence = 42
+    print("TEST 7")
+    test(a_great_sentence)
+    # The size of the data in bytes is: 14
+    # The content of the data is: 42
+    # Must input a valid string!

@@ -12,6 +12,34 @@ class Node:
         self.prev = None
         self.next = None
 
+# common logic for both get() and set() moves the passed node to the tail
+def new_tail(self, node):
+
+    # head, pop it off
+    if node == self.head:
+        self.head = self.head.next
+        self.prev = None
+
+    # middle node, slice it out
+    elif node.prev != None and node.next != None:
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    # tail, do nothing, this is already the most recent item
+    elif node == self.tail:
+        return
+
+    # save the current tail
+    old_tail = self.tail
+
+    # set new tail
+    self.tail.next = node
+    self.tail = node
+    self.tail.next = None
+    self.tail.prev = old_tail
+
+    return
+
 # cache is as a hashmap of nodes
 class LRU_Cache:
 
@@ -30,54 +58,24 @@ class LRU_Cache:
         self.num_nodes = 0
 
     # get an item from the cache (peek)
+    # after get() the item remains in the cache and becomes the most recently viewed, meaning it becomes the last to be removed
     def get(self, key):
 
         # catch zero capacity cache
         if self.capacity == 0:
-            print("Can't perform operations on 0 capacity cache")
+            print("Can't perform operations on 0 capacity cache!")
             return
 
         # catch if the key does not exist
         if key not in self.hashmap:
             return -1
 
-        # return the value for this key
-        node = self.hashmap[key]
-        return node.value
-
-    # remove an item from the cache and return it
-    def pop(self, key):
-
-        # catch zero capacity cache
-        if self.capacity == 0:
-            print("Can't perform operations on 0 capacity cache")
-            return
-
-        # catch if the key does not exist
-        if key not in self.hashmap:
-            return -1
-
-        # extract the value attribute of this node
+        # per the "recently used" requirement we need to make this node the tail, as it is now the most recently viewed
         node = self.hashmap[key]
         value = node.value
 
-        # next three conditionals check the location of this node in the doubly linked list: head, middle, or tail
-
-        # head
-        if node == self.head:
-            self.head = self.head.next
-
-        # middle node
-        elif node.prev != None and node.next != None:
-            node.prev.next = node.next
-            node.next.prev = node.prev
-
-        # tail
-        elif node == self.tail:
-            self.tail = node.prev
-
-        # decrement counter since a node was removed
-        self.num_nodes -= 1
+        # move this node to the tail
+        new_tail(self, node)
 
         return value
 
@@ -86,7 +84,7 @@ class LRU_Cache:
 
         # catch zero capacity cache
         if self.capacity == 0:
-            print("Can't perform operations on 0 capacity cache")
+            print("Can't perform operations on 0 capacity cache!")
             return
 
         # key already exists so only need to update its value
@@ -95,6 +93,9 @@ class LRU_Cache:
             # update the node value with the passed value
             node = self.hashmap[key]
             node.value = value
+
+            # move this node to the tail
+            new_tail(self, node)
 
         # new element becomes new tail
         else:
@@ -107,6 +108,7 @@ class LRU_Cache:
 
                 # move linked list head pointer
                 self.head = self.head.next
+                self.head.prev = None
 
                 # update the element counter
                 self.num_nodes -= 1
@@ -176,32 +178,31 @@ print(cache.get(2))
 
 cache.print_cache()
 # key = 1 : value = 1
+# key = 3 : value = apples
 # key = 2 : value = 2
-# key = 3 : value = apples
 
-# pop the 2nd item
-print()
-print("pop the 2nd item")
-print(cache.pop(2))
-# 2
-
-cache.print_cache()
-# key = 1 : value = 1
-# key = 3 : value = apples
-
-# add 3 more items to the cache to reach capacity of 5
-cache.set(4, 4)
+# add 2 more items to the cache to reach capacity of 5
 cache.set(8, "bananas")
 cache.set(12, 42)
 print()
-print("add 3 more items to the cache to reach capacity of 5")
+print("add 2 more items to the cache to reach capacity of 5")
 cache.print_cache()
+# key = 1 : value = 1
+# key = 3 : value = apples
+# key = 2 : value = 2
+# key = 8 : value = bananas
+# key = 12 : value = 42
 
 # add 1 more element, this exceeds capacity and oldest element (1:1) is removed
 cache.set(9, 9)
 print()
 print("add 1 more item, this exceeds capacity and oldest element (1:1) is removed")
 cache.print_cache()
+# key = 3 : value = apples
+# key = 2 : value = 2
+# key = 8 : value = bananas
+# key = 12 : value = 42
+# key = 9 : value = 9
 
 # test 2
 
@@ -212,6 +213,7 @@ cache.set(3, 3)
 cache.set(4, 4)
 print()
 print("test 2:")
+print()
 print(cache.get(1))
 # 1
 print(cache.get(2))
@@ -221,26 +223,26 @@ print(cache.get(9))
 cache.set(5, 5)
 
 cache.print_cache()
-# key = 1 : value = 1
-# key = 2 : value = 2
 # key = 3 : value = 3
 # key = 4 : value = 4
+# key = 1 : value = 1
+# key = 2 : value = 2
 # key = 5 : value = 5
 
 cache.set(6, 6)
 
 cache.print_cache()
-# key = 2 : value = 2
-# key = 3 : value = 3
 # key = 4 : value = 4
+# key = 1 : value = 1
+# key = 2 : value = 2
 # key = 5 : value = 5
 # key = 6 : value = 6
 
 cache.set(7, 7)
 
 cache.print_cache()
-# key = 3 : value = 3
-# key = 4 : value = 4
+# key = 1 : value = 1
+# key = 2 : value = 2
 # key = 5 : value = 5
 # key = 6 : value = 6
 # key = 7 : value = 7
@@ -248,40 +250,41 @@ cache.print_cache()
 print(cache.get(1))
 # -1
 print(cache.get(2))
-# -1
+# 2
 print(cache.get(3))
-# 3
-
-print(cache.pop(3))
-# 3
-print(cache.pop(4))
-# 4
-print(cache.pop(42))
 # -1
 
 cache.print_cache()
 # key = 5 : value = 5
 # key = 6 : value = 6
 # key = 7 : value = 7
+# key = 1 : value = 1
+# key = 2 : value = 2
 
 # test 3: edge case of get/set on capacity 0
+print()
+print("test 3:")
+print()
 cache = LRU_Cache(0)
 cache.set(1, 1)
-# Can't perform operations on 0 capacity cache
+# Can't perform operations on 0 capacity cache!
 cache.get(2)
-# Can't perform operations on 0 capacity cache
-cache.pop(3)
-# Can't perform operations on 0 capacity cache
+# Can't perform operations on 0 capacity cache!
 
 # test 4: update value of existing item
+print()
+print("test 4:")
 lru = LRU_Cache(2)
 lru.set(1, 1)
 lru.set(2, 2)
+lru.print_cache()
+# key = 1 : value = 1
+# key = 2 : value = 2
+
 lru.set(1, 10)
 print(lru.get(1))
 # 10
-print(lru.get(2))
 
 lru.print_cache()
-# key = 1 : value = 10
 # key = 2 : value = 2
+# key = 1 : value = 10

@@ -43,6 +43,8 @@ problem_2.py
 
 ### Explanation
 
-The data structure for this problem is explicitly defined in the problem statement: return a list. No other structures are necessary.
+The data structure for this problem is explicitly defined in the problem statement: return a list. No other structures are necessary. Another perspective on this solution is to consider this as traversal through a tree structure. The leaves of the three are the files, and the directories are nodes.
 
 The time complexity is O(n), where n = number of items, both files and directories, in the passed input "path" directory. Since this is a recursive search algorithm through an unordered, unknown directory structure, the best, average, and worst cases are all the same at O(n). We need to search everything to check if the entity has the suffix of interest, there is no further optimization in this case.
+
+Space complexity is more difficult to calculate as this algorithm uses recursion, and therefore all the constant input complexity for the function is present each time another instance of itself is added to the call stack. The call stack size requirement can be approximated by how many times the function is recursively called, which in this case is once for every subdirectory in the path. Let d = total number of directories in the path, then total space = d * n, where n is the number of items (files and directories) on each directory level. Even though n changes on each level, we can say that the total number of calls added to the stack is proportional to the number of directories, d. Therefore, space complexity reduces to O(n), where n = d = number of directories in the path.

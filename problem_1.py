@@ -87,7 +87,7 @@ class LRU_Cache:
             print("Can't perform operations on 0 capacity cache!")
             return
 
-        # key already exists so only need to update its value
+        # key already exists so update its value, and make it the tail (most recent)
         if key in self.hashmap:
 
             # update the node value with the passed value
